@@ -1,0 +1,7 @@
+sliced_output/
+*.wav
+*.zip
+train.list
+__pycache__/
+*.pyc
+.DS_Store

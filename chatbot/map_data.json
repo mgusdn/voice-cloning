@@ -1,0 +1,166 @@
+{
+  "value_catalog": {
+    "justice": {
+      "number": 1,
+      "name_ko": "정의",
+      "name_en": "Justice",
+      "definition": "행동의 올바름, 공정함, 합리성"
+    },
+    "pleasure": {
+      "number": 2,
+      "name_ko": "기쁨",
+      "name_en": "Pleasure",
+      "definition": "좋아하는 것에서 얻는 즐거움 및 만족감"
+    },
+    "love": {
+      "number": 3,
+      "name_ko": "사랑",
+      "name_en": "Love",
+      "definition": "다른 사람을 조건없이 받아들이는 사심 없는 헌신"
+    },
+    "loyalty": {
+      "number": 4,
+      "name_ko": "충성심",
+      "name_en": "Loyalty",
+      "definition": "사람, 그룹, 기관 또는 신념에 대한 지속적인 충절"
+    },
+    "physical_appearance": {
+      "number": 5,
+      "name_ko": "외모",
+      "name_en": "Physical Appearance",
+      "definition": "외적인 매력에 관심을 갖는 것"
+    },
+    "aesthetics": {
+      "number": 6,
+      "name_ko": "미학",
+      "name_en": "Aesthetics",
+      "definition": "아름다움과 예술적 경험을 즐기고 음미하는 것"
+    },
+    "control_influence": {
+      "number": 7,
+      "name_ko": "통제/영향력",
+      "name_en": "Control / Influence",
+      "definition": "다른 사람에게 미치는 권한 또는 영향력"
+    },
+    "spirituality_religion": {
+      "number": 8,
+      "name_ko": "영성/종교",
+      "name_en": "Spirituality / Religion",
+      "definition": "신과의 교감, 신에게 귀의 및 신과 관련된 활동"
+    },
+    "achievement": {
+      "number": 9,
+      "name_ko": "성취",
+      "name_en": "Achievement",
+      "definition": "지속적인 노력을 통해 원하는 결과를 얻는 것"
+    },
+    "autonomy": {
+      "number": 10,
+      "name_ko": "자율성",
+      "name_en": "Autonomy",
+      "definition": "개인의 독립성과 자기 결정권을 보장하는 것"
+    },
+    "health": {
+      "number": 11,
+      "name_ko": "건강",
+      "name_en": "Health",
+      "definition": "신체, 정신의 온전함"
+    },
+    "honesty": {
+      "number": 12,
+      "name_ko": "정직성",
+      "name_en": "Honesty",
+      "definition": "진솔함, 열린 마음, 행동의 공정성, 진실성"
+    },
+    "passion": {
+      "number": 13,
+      "name_ko": "열정",
+      "name_en": "Passion",
+      "definition": "어떤 일에서 금전적 이득이나 만족보다는 '몰입하는 마음'에서 보람을 느끼는 것"
+    },
+    "dignity": {
+      "number": 14,
+      "name_ko": "존엄성",
+      "name_en": "Dignity",
+      "definition": "자신뿐 아니라 타인에게서 존중을 이끌어내는 행동과 위엄을 보여주는 것"
+    },
+    "family": {
+      "number": 15,
+      "name_ko": "가족",
+      "name_en": "Family",
+      "definition": "정서적으로 또는 생물학적으로 연결된 사람들"
+    },
+    "recognition": {
+      "number": 16,
+      "name_ko": "인정",
+      "name_en": "Recognition",
+      "definition": "자신이 중요하다는 느낌을 주는, 다른 사람에게서 받는 호의적인 관심과 인정"
+    },
+    "wealth": {
+      "number": 17,
+      "name_ko": "부유함",
+      "name_en": "Wealth",
+      "definition": "가치 있는 물질적 소유물과 자원이 풍부함, 경제적으로 풍요로움"
+    },
+    "humility": {
+      "number": 18,
+      "name_ko": "겸손",
+      "name_en": "Humility",
+      "definition": "자신을 내세우지 않는 태도, 온화하고 가르침을 잘 받아들이며 변화에 대해 열린 마음을 갖고 있음"
+    },
+    "creativity": {
+      "number": 19,
+      "name_ko": "창의력",
+      "name_en": "Creativity",
+      "definition": "진취적인 생각, 규칙, 패턴, 관계 등을 뛰어넘는 의미 있는 새로운 생각, 형식, 방법 및 행동을 내놓는 능력"
+    },
+    "harmony": {
+      "number": 20,
+      "name_ko": "조화",
+      "name_en": "Harmony",
+      "definition": "관계 속에서의 일체감, 주변 사람들과의 관계에서 충돌과 갈등이 없는 상태"
+    },
+    "competency_skill": {
+      "number": 21,
+      "name_ko": "역량/기술",
+      "name_en": "Competency / Skill",
+      "definition": "주어진 임무를 완수하는 능력"
+    },
+    "altruism": {
+      "number": 22,
+      "name_ko": "이타심",
+      "name_en": "Altruism",
+      "definition": "타인의 요구와 가치관에 대한 적극적인 배려"
+    },
+    "honor": {
+      "number": 23,
+      "name_ko": "명예",
+      "name_en": "Honor",
+      "definition": "인생에서 우월한 입지를 누리며 두각을 나타내는 사람이 받는 존경"
+    },
+    "community": {
+      "number": 24,
+      "name_ko": "공동체",
+      "name_en": "Community",
+      "definition": "무엇인가에 대해 함께 마음을 쓰고 추구하는 사람들"
+    },
+    "relationship": {
+      "number": 25,
+      "name_ko": "관계",
+      "name_en": "Relationship",
+      "definition": "자신을 좋아하고 염려해주는 사람들과 함께함"
+    },
+    "emotional_well_being": {
+      "number": 26,
+      "name_ko": "정서적 행복",
+      "name_en": "Emotional Well-being",
+      "definition": "마음의 평화, 지속적인 자신감, 근심으로부터의 자유, 평온"
+    },
+    "knowledge": {
+      "number": 27,
+      "name_ko": "지식",
+      "name_en": "Knowledge",
+      "definition": "배움을 통해 얻은 사실과 교훈, 이를 정리하고 설명하는 데 도움이 되는 원칙을 이해하고 인식하는 것"
+    }
+  }
+}
