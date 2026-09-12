@@ -1,8 +1,8 @@
 """Downloads a ggml model for whisper.cpp (via pywhispercpp).
 
 Run:
-    python download_model.py            # downloads large-v3 (default)
-    python download_model.py medium     # or any name in pywhispercpp.constants.AVAILABLE_MODELS
+    python -m chatbot.download_stt          # downloads small (default)
+    python -m chatbot.download_stt medium   # or any name in pywhispercpp.constants.AVAILABLE_MODELS
 """
 import sys
 

@@ -1,23 +1,2 @@
-# 화자분리 (diarize.py, build_dataset.py)
-torch
-pyannote.audio
-
-# 자막/ASR (build_dataset.py)
-faster-whisper
-
-# 성문 임베딩 - 화자 식별 (build_dataset.py)
-resemblyzer
-
-# 오디오 I/O (build_dataset.py, voice_clone/infer.py, voice_clone/demo_newlines.py)
-soundfile
-numpy
-
-# 음원분리 - BGM/잡음 제거 (README 파이프라인: demucs 단계)
-demucs
-
-# --- 별도 설치 필요 (pip 대상 아님) ---
-# - ffmpeg, ffprobe: brew install ffmpeg (diarize.py, make_reference.py 등에서 subprocess로 호출)
-# - GPT-SoVITS: 별도 git clone + 자체 install.sh 로 설치 (voice_clone/infer.py, demo_newlines.py 가 사용)
-#   https://github.com/RVC-Boss/GPT-SoVITS
-# - TTS (Coqui XTTS-v2, tts_clone.py 용): Python <3.12 필요, 이 .venv(3.13)엔 설치 불가.
-#   별도 venv(예: .venv-f5, python3.11 이하)에 requirements-tts.txt 로 설치할 것.
+# Default install: text chatbot and GPT-SoVITS HTTP client.
+-r chatbot/requirements.txt

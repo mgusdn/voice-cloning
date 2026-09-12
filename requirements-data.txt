@@ -1,0 +1,9 @@
+# Audio preparation; install separately from the lightweight chatbot runtime.
+torch
+pyannote.audio
+faster-whisper
+demucs
+soundfile
+numpy
+librosa
+yt-dlp

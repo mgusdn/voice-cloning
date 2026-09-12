@@ -1,41 +1,48 @@
-# 가상환경
+# Environments and local settings
 venv/
-.venv/
-
-# 시크릿
+.venv*/
 .env
 *.env.local
-
-# 파이썬
 __pycache__/
-*.pyc
-
-# OS
+*.py[cod]
 .DS_Store
+.claude/
+.superpowers/
 
-# 오디오/모델 산출물 (용량 크고 재생성 가능 — 개인 목소리 데이터라 비공개 유지)
+# Models, recordings and generated output
 *.wav
 *.mp3
+*.flac
+*.m4a
 *.pth
 *.ckpt
 *.zip
+*.part
+/runtime/
+/raw_media/
+/segments/
+/_ds_work/
+/_ref_parts/
+/training/GPT-SoVITS/
+# Existing installations survive a pull; keep them ignored during migration.
+/files/GPT-SoVITS/
+/GPT-SoVITS/
+/files/droh_weights/
+/files/droh/
+/chatbot-voice/audio_out/
+/training/sliced_output/
+/dataset/*/wavs/
+/dataset/*/trained/
+*.list
+train.jsonl
+val.jsonl
 
-# 작업 스크래치 폴더
-_ds_work/
-_ref_parts/
-
-# GPT-SoVITS 본체: 00_setup.sh로 upstream(RVC-Boss/GPT-SoVITS)에서 새로 클론 +
-# 사전학습 모델 다운로드하는 구조라 통째로 git 제외 (17GB+, 우리가 만든 코드 아님)
-files/GPT-SoVITS/
-
-# 학습 데이터셋 (개인 음성 데이터, 오디오는 위 *.wav로도 걸리지만 폴더째 제외)
-dataset/*/wavs/
-
-# 데모용으로 남겨둔 예시 가중치/오디오 (100MB 제한 초과, 필요시 별도 전달)
-files/droh_weights/
-files/droh/
-files/output_droh*.wav
-.claude/
-
-# 세션 중 실수로 생긴 중복 폴더
-dataset/droh/droh/
+# Preserve the three existing transcript fixtures, ignore new personal datasets.
+/dataset/*
+!/dataset/droh/
+!/dataset/lecturer_sp01/
+!/dataset/임커밋/
+/dataset/droh/*
+/dataset/lecturer_sp01/*
+/dataset/임커밋/*
+!/dataset/*/transcript.jsonl
