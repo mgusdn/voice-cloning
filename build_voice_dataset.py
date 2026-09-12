@@ -11,24 +11,13 @@ diarize.py 로 뽑은 화자 합본(MERGED_*.wav) 하나를 받아:
     python build_voice_dataset.py <입력.wav> <화자이름>
 """
 
+import argparse
 import os
 import sys
 import json
 import subprocess
+import tempfile
 from pathlib import Path
-
-import soundfile as sf
-from faster_whisper import WhisperModel
-
-if len(sys.argv) < 3:
-    sys.exit(f"사용법: python {sys.argv[0]} <입력.wav> <화자이름>")
-
-INPUT = Path(sys.argv[1])
-SPEAKER = sys.argv[2]
-
-OUT_DIR = Path("dataset") / SPEAKER
-WAVS_DIR = OUT_DIR / "wavs"
-WORK = Path("_ds_work") / SPEAKER
 
 SR = 24000
 MIN_SEC = 3.0
@@ -43,11 +32,11 @@ def run(cmd):
 
 def separate_vocals(src: Path, workdir: Path) -> Path:
     """demucs 로 보컬만 분리 -> vocals.wav 경로 반환."""
-    run(["demucs", "--two-stems=vocals", "-d", DEVICE, "-o", str(workdir), str(src)])
-    matches = list(workdir.rglob("vocals.wav"))
-    if not matches:
-        sys.exit("demucs 보컬 분리 결과를 찾지 못했습니다.")
-    return matches[0]
+    run(["demucs", "-n", "htdemucs", "--two-stems=vocals", "-d", DEVICE, "-o", str(workdir), str(src)])
+    vocals = workdir / "htdemucs" / src.stem / "vocals.wav"
+    if not vocals.is_file():
+        sys.exit(f"현재 입력의 demucs 보컬 분리 결과를 찾지 못했습니다: {vocals}")
+    return vocals
 
 
 def to_wav_24k(src: Path, dst: Path):
@@ -58,11 +47,12 @@ def fmt(t: float) -> str:
     return f"{t:.1f}s"
 
 
-def main():
-    if not INPUT.exists():
-        sys.exit(f"입력 파일을 찾을 수 없습니다: {INPUT}")
+def build_dataset(INPUT, SPEAKER, WORK, output_root):
+    import soundfile as sf
+    from faster_whisper import WhisperModel
 
-    WORK.mkdir(parents=True, exist_ok=True)
+    OUT_DIR = output_root / SPEAKER
+    WAVS_DIR = OUT_DIR / "wavs"
     WAVS_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"[1/4] demucs 로 보컬 분리 중... ({INPUT}, device={DEVICE})")
@@ -109,6 +99,22 @@ def main():
     print(f"\n완료! {OUT_DIR}/")
     print(f"  클립 {i}개, 총 {total_dur/60:.1f}분")
     print(f"  -> {OUT_DIR}/wavs/, {SPEAKER}.list, {SPEAKER}.colab.list, transcript.jsonl")
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", type=Path)
+    parser.add_argument("speaker")
+    parser.add_argument("--output-dir", type=Path, default=Path("dataset"), help="화자 폴더를 생성할 상위 폴더")
+    args = parser.parse_args(argv)
+    if not args.input.is_file():
+        parser.error(f"입력 파일을 찾을 수 없습니다: {args.input}")
+    if args.speaker in ("", ".", "..") or any(c in args.speaker for c in "/\\|\r\n"):
+        parser.error("화자 이름에는 경로 구분자, 줄바꿈 또는 |를 사용할 수 없습니다.")
+    work_root = Path("_ds_work")
+    work_root.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f"{args.speaker}-", dir=work_root) as work:
+        build_dataset(args.input.resolve(), args.speaker, Path(work), args.output_dir)
 
 
 if __name__ == "__main__":

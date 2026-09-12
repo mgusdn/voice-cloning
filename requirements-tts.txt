@@ -1,8 +1,0 @@
-# 보이스 클로닝 - 제로샷 XTTS-v2 (tts_clone.py)
-# Coqui TTS는 Python <3.12 필요. 별도 venv에 설치할 것:
-#   brew install python@3.11
-#   /opt/homebrew/opt/python@3.11/bin/python3.11 -m venv .venv-f5
-#   source .venv-f5/bin/activate
-#   pip install -r requirements-tts.txt
-TTS
-torch

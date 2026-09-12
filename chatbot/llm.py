@@ -4,15 +4,16 @@ gpt-5.4-mini (via the Responses API) handles everything: slot extraction,
 pattern rerank, question rendering, and the final summary.
 """
 import json
+import os
 import re
 from pathlib import Path
 
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv(Path(__file__).resolve().parent / ".env", override=True)
+load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
-OPENAI_MODEL = "gpt-5.4-mini"
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4-mini")
 
 _openai_client = None
 

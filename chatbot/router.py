@@ -1,5 +1,5 @@
 from langgraph.graph import END
-from state import SessionState
+from .state import SessionState
 
 STAGE_ENTRY_NODE = {
     "rapport": "rapport",

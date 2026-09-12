@@ -3,10 +3,10 @@
 유튜브 오디오 mp3 추출 + 특정 구간 제외 스크립트
 
 사용법:
-    python extract_audio.py "유튜브URL"
+    python youtube.py "유튜브URL"
 
 사전 설치 필요:
-    pip install yt-dlp --break-system-packages
+    python -m pip install -r requirements-data.txt
     (ffmpeg는 별도 설치 필요: brew install ffmpeg / apt install ffmpeg)
 """
 

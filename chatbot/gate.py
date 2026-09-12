@@ -1,5 +1,5 @@
 """Coverage/gate computation. Pure function, no LLM or embedding calls."""
-from state import GateState, SKIP_IF_FILLED_SLOTS, SLOT_ORDER, SessionState
+from .state import GateState, SKIP_IF_FILLED_SLOTS, SLOT_ORDER, SessionState
 
 
 def compute_gate(state: SessionState) -> GateState:

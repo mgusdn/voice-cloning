@@ -2,10 +2,10 @@ import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-from data import VALUE_IDS, get_value, value_list_text
-from debug import debug_print
-from gate import compute_gate
-from state import (
+from .data import VALUE_IDS, get_value, value_list_text
+from .debug import debug_print
+from .gate import compute_gate
+from .state import (
     SessionState,
     SLOT_ORDER,
     SLOT_QUESTION_TEMPLATES,
@@ -13,8 +13,8 @@ from state import (
     EXPLICIT_UNKNOWN_VALUE,
     askable_slots,
 )
-from llm import call_openai_json
-import prompts
+from .llm import call_openai_json
+from . import prompts
 
 
 def _timed_llm_call(label: str, system: str, user: str, **kwargs) -> dict:

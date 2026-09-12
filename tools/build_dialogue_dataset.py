@@ -12,9 +12,10 @@ raw_media/ 안의 여러 영상/오디오를 일괄 처리하여:
 
 사용법 (.venv 활성화 후):
     export HF_TOKEN=hf_xxxxx
-    python build_dataset.py
+    python tools/build_dialogue_dataset.py --reference <참조음성.wav>
 """
 
+import argparse
 import os
 import sys
 import json
@@ -22,15 +23,9 @@ import subprocess
 from pathlib import Path
 from collections import defaultdict
 
-import numpy as np
-import soundfile as sf
-import torch
-from pyannote.audio import Pipeline
-from faster_whisper import WhisperModel
-from resemblyzer import VoiceEncoder
 
 # ---------------- 설정 ----------------
-BASE = Path("/Users/hyeonwoo/Documents/05_Coding/voice-cloning")
+BASE = Path(__file__).resolve().parents[1]
 RAW_DIR = BASE / "raw_media"           # 원본 영상/오디오를 여기 넣으세요
 OUT_DIR = BASE / "dataset"
 REF_VOICE = BASE / "cand3.wav"          # 알려진 박사님 음성(성문 기준)
@@ -55,11 +50,6 @@ MEDIA_EXT = {".mp3", ".mp4", ".wav", ".m4a", ".mov", ".mkv", ".webm", ".aac", ".
 VALID_RATIO = 0.05      # 검증셋 비율
 # --------------------------------------
 
-HF_TOKEN = os.environ.get("HF_TOKEN")
-if not HF_TOKEN:
-    sys.exit("환경변수 HF_TOKEN이 없습니다.  export HF_TOKEN=hf_xxxxx 후 다시 실행하세요.")
-
-
 def to_wav(src: Path, dst: Path):
     subprocess.run(
         ["ffmpeg", "-y", "-i", str(src), "-ac", "1", "-ar", str(SR), str(dst)],
@@ -77,12 +67,16 @@ def is_backchannel(text: str) -> bool:
 
 
 def cosine(a, b):
+    import numpy as np
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-9))
 
 
 def process_file(path: Path, pipeline, whisper, encoder, ref_embed):
     """한 파일 -> [(role, text), ...] 시간순 턴 리스트(병합 완료) 반환. 박사님 없으면 None."""
-    WORK.mkdir(exist_ok=True)
+    import numpy as np
+    import soundfile as sf
+
+    WORK.mkdir(parents=True, exist_ok=True)
     wav_path = WORK / (path.stem + "_16k.wav")
     to_wav(path, wav_path)
 
@@ -164,13 +158,55 @@ def turns_to_pairs(turns):
     return pairs
 
 
-def main():
-    if not REF_VOICE.exists():
+def split_pairs(pairs):
+    """Keep every unique sample in exactly one deterministic train/valid partition."""
+    ordered = sorted(pairs, key=lambda pair: (len(pair[1]), pair[0]))
+    n_valid = max(1, int(len(ordered) * VALID_RATIO)) if len(ordered) > 20 else 0
+    if n_valid:
+        step = max(1, len(ordered) // n_valid)
+        valid_idx = set(list(range(0, len(ordered), step))[:n_valid])
+    else:
+        valid_idx = set()
+    valid = [ordered[i] for i in sorted(valid_idx)]
+    train = [pair for i, pair in enumerate(ordered) if i not in valid_idx]
+    return train, valid
+
+
+def prepare_reference(source, workdir):
+    """Resample references to the same 16 kHz used for candidate embeddings."""
+    workdir.mkdir(parents=True, exist_ok=True)
+    target = workdir / "reference_16k.wav"
+    to_wav(source, target)
+    return target
+
+
+def main(argv=None):
+    global RAW_DIR, OUT_DIR, REF_VOICE, WORK
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
+    parser.add_argument("--reference", type=Path, required=True, help="화자 식별용 참조 음성")
+    parser.add_argument("--output-dir", type=Path, default=OUT_DIR)
+    args = parser.parse_args(argv)
+    RAW_DIR, OUT_DIR, REF_VOICE = args.raw_dir, args.output_dir, args.reference
+    WORK = BASE / "_ds_work" / "dialogue"
+    if not RAW_DIR.is_dir():
+        parser.error(f"원본 미디어 폴더가 없습니다: {RAW_DIR}")
+    HF_TOKEN = os.environ.get("HF_TOKEN")
+    if not HF_TOKEN:
+        parser.error("환경변수 HF_TOKEN을 설정하세요.")
+    if not REF_VOICE.is_file():
         sys.exit(f"박사님 기준 음성이 없습니다: {REF_VOICE}")
     files = sorted(f for f in RAW_DIR.iterdir() if f.suffix.lower() in MEDIA_EXT)
     if not files:
         sys.exit(f"{RAW_DIR}/ 에 처리할 미디어 파일이 없습니다. mp3/mp4 등을 넣어주세요.")
     print(f"처리 대상 {len(files)}개: " + ", ".join(f.name for f in files))
+
+    import numpy as np
+    import soundfile as sf
+    import torch
+    from pyannote.audio import Pipeline
+    from faster_whisper import WhisperModel
+    from resemblyzer import VoiceEncoder
 
     print("\n[모델 로딩] pyannote / whisper / 성문인코더 ...")
     pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-community-1", token=HF_TOKEN)
@@ -179,7 +215,7 @@ def main():
     whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
     encoder = VoiceEncoder()
 
-    ref_audio, rsr = sf.read(str(REF_VOICE))
+    ref_audio, rsr = sf.read(str(prepare_reference(REF_VOICE, WORK)))
     if ref_audio.ndim > 1:
         ref_audio = ref_audio.mean(axis=1)
     ref_embed = encoder.embed_utterance(ref_audio.astype(np.float32))
@@ -207,15 +243,9 @@ def main():
         seen.add(key)
         uniq.append((u, a))
 
-    # 셔플(결정적) 후 train/valid 분할
-    uniq.sort(key=lambda p: (len(p[1]), p[0]))   # 안정적 정렬
-    n_valid = max(1, int(len(uniq) * VALID_RATIO)) if len(uniq) > 20 else 0
-    # 일정 간격으로 valid 추출(분포 고르게)
-    valid_idx = set(range(0, len(uniq), max(1, len(uniq) // n_valid))) if n_valid else set()
-    valid = [uniq[i] for i in sorted(valid_idx)][:n_valid]
-    train = [p for i, p in enumerate(uniq) if i not in valid_idx]
+    train, valid = split_pairs(uniq)
 
-    OUT_DIR.mkdir(exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     def write_jsonl(path, pairs):
         with open(path, "w", encoding="utf-8") as fh:

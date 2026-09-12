@@ -1,9 +1,9 @@
 import time
 
 from langgraph.graph import END, START, StateGraph
-from debug import debug_print
-from state import SessionState
-from nodes import (
+from .debug import debug_print
+from .state import SessionState
+from .nodes import (
     rapport_node,
     render_question_node,
     values_node,
@@ -11,7 +11,7 @@ from nodes import (
     consolidate_slots_node,
     insight_report_node,
 )
-from router import (
+from .router import (
     route_entry,
     route_after_rapport,
     route_after_gate,
